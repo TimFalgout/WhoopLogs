@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+  <title>My Excercise App</title>
+</head>
+
+<body>
+  <!-- Header -->
+  <div class="container-fluid header-container d-flex">
+    <div class="container d-flex text-container">
+      <a class="nav-link active px-2 py-2" aria-current="page" href="/">🚴🏽‍♂️ Entry</a>
+      <img src="/myApp.png" alt="workout image">
+      <a class="nav-link px-2 py-2" href="/logs">Logs🏃🏽‍♂️‍➡️</a>
+    </div>
+  </div>
+  <div class="container d-flex avg-container my-5">
+    <h3>My Monthly Averages</h3>
+  </div>
+  <!-- log table averages static head -->
+  <div class="container table-container-avg">
+    <table class="table table-striped-columns">
+      <thead>
+        <tr>
+          <th scope="col">Duration</th>
+          <th scope="col">Distance M</th>
+          <th scope="col">Pace MPH</th>
+          <th scope="col">Zone 5</th>
+          <th scope="col">Zone 4</th>
+          <th scope="col">Zone 3</th>
+          <th scope="col">Zone 2</th>
+          <th scope="col">Zone 1</th>
+          <th scope="col">Avg HR</th>
+          <th scope="col">Max HR</th>
+          <th scope="col">Strain</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Display the calculated averages -->
+        <tr>
+          <td><%= duration_avg %></td>
+          <td><%= distance_avg + ' Miles' %></td>
+          <td><%= pace_avg + ' MPH' %></td>
+          <td><%= zone5_avg + '%' %></td>
+          <td><%= zone4_avg + '%' %></td>
+          <td><%= zone3_avg + '%' %></td>
+          <td><%= zone2_avg + '%' %></td>
+          <td><%= zone1_avg + '%' %></td>
+          <td><%= avg_hr_avg %></td>
+          <td><%= max_hr_avg %></td>
+          <td><%= strain_avg %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="container d-flex workout-container my-5">
+    <form class="exportWorkouts" method="GET" action="export-both">
+      <button class="btn btn-success" type="submit">Export</button>
+    </form>
+    <h3>My Daily Workouts</h3>
+    <form class="deleteAverages" method="POST" action="delete-both">
+      <button class="btn btn-danger" type="submit">Delete</button>
+    </form>
+  </div>
+  <!-- log table data by date-->
+  <!-- static table head -->
+  <div class="container table-container">
+    <table class="table table-striped-columns">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Description</th>
+          <th scope="col">Duration</th>
+          <th scope="col">Distance M</th>
+          <th scope="col">Pace MPH</th>
+          <th scope="col">Zone 5</th>
+          <th scope="col">Zone 4</th>
+          <th scope="col">Zone 3</th>
+          <th scope="col">Zone 2</th>
+          <th scope="col">Zone 1</th>
+          <th scope="col">Avg HR</th>
+          <th scope="col">Max HR</th>
+          <th scope="col">Strain</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- dynamic entries from js form on index.ejs -->
+        <% entryLogs.forEach(function(row) { %>
+        <tr id="table-rows">
+          <td><%=  new Date(row.date).toLocaleDateString('en-US') %></td>
+          <td><%= row.description %></td>
+          <td><%= row.duration %></td>
+          <td><%= row.distance + ' Miles' %></td>
+          <td><%= row.pace + ' MPH' %></td>
+          <td><%= row.zone5 + '%' %></td>
+          <td><%= row.zone4 + '%' %></td>
+          <td><%= row.zone3 + '%' %></td>
+          <td><%= row.zone2 + '%' %></td>
+          <td><%= row.zone1 + '%' %></td>
+          <td><%= row.avg_hr %></td>
+          <td><%= row.max_hr %></td>
+          <td><%= row.strain %></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="container footer-container">
+    <p class="footer-text">©️ FalgouDev 2024</p>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="index.js"></script>
+</body>
+
+</html>

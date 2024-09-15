@@ -1,0 +1,71 @@
+body {
+    background-color: #DDE6ED;
+    padding: 0;
+    margin: 0;
+}
+
+.header-container {
+    background-color: #526D82;
+}
+
+.text-container {
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    color: #DDE6ED;
+}
+
+.header-container a {
+    font-size: 35px;
+    border-radius: 10px;
+}
+
+#table-rows {
+    text-align: center;
+}
+
+.table-container {
+    overflow-x: auto;
+    text-align: center;
+}
+
+.table-container-avg {
+    overflow-x: auto;
+    text-align: center;
+}
+
+.text-container img {
+    width: 170px;
+    height: 70px;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+    color: #526D82;
+}
+
+.avg-container {
+    display: flex;
+    justify-content: center;
+}
+
+.workout-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+@media (max-width: 768px) {
+    .header-container a {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .text-container img {
+        width: 80px;
+        height: 50px;
+    }
+}
