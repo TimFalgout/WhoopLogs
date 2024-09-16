@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 const { Pool } = require('pg');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Require and configure dotenv at the top of your file
 require('dotenv').config();
