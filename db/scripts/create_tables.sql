@@ -19,7 +19,7 @@ CREATE TABLE exercise_logs (
 
 CREATE TABLE exercise_averages (
   id SERIAL PRIMARY KEY,
-  duration_avg INTERVAL NOT NULL,
+  duration_avg TIME WITHOUT TIME ZONE NOT NULL,
   distance_avg DOUBLE PRECISION NOT NULL,
   pace_avg DOUBLE PRECISION NOT NULL,
   zone5_avg DOUBLE PRECISION NOT NULL,
