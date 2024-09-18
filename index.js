@@ -1,24 +1,33 @@
+require('dotenv').config();
+
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const fastcsv = require("fast-csv");
-const dotenv = require('dotenv');
 const { Pool } = require('pg');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Load environment variables from .env file
-require('dotenv').config();
-
-
 const pool = new Pool({
-  user: process.env.DB_USER,       
-  host: process.env.DB_HOST,       
-  database: process.env.DB_NAME,   
-  password: process.env.DB_PASSWORD, 
-  port: process.env.DB_PORT,      
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
+
+const runMigrations = async () => {
+  const sqlFilePath = path.join(__dirname, 'db', 'scripts', 'create_tables.sql');
+  const sql = fs.readFileSync(sqlFilePath, 'utf8');
+  try {
+    await pool.query(sql);
+    console.log('Database tables created successfully.');
+  } catch (err) {
+    console.error('Error creating database tables:', err);
+  }
+};
+
+runMigrations();
 
 app.get("/", (req, res) => {
   res.render("index");
