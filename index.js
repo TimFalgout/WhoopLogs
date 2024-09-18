@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 
 const express = require("express");
 const fs = require("fs");
@@ -15,6 +15,16 @@ const pool = new Pool({
     rejectUnauthorized: false,
   },
 });
+
+// Test database connection
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('Database connection error:', err.stack);
+  } else {
+    console.log('Database connected:', res.rows[0]);
+  }
+});
+
 
 const runMigrations = async () => {
   const sqlFilePath = path.join(__dirname, 'db', 'scripts', 'create_tables.sql');
