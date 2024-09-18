@@ -185,12 +185,11 @@ app.post("/submit", async (req, res) => {
   try {
     // Insert into the exercise_logs table
     await pool.query(
-      `INSERT INTO exercise_logs (date, description, duration, distance, pace, zone5, zone4, zone3, zone2, zone1, avg_hr, max_hr, strain)
-            VALUES ($1, $2, $3::interval, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+      `INSERT INTO exercise_logs (date, description, distance, pace, zone5, zone4, zone3, zone2, zone1, avg_hr, max_hr, strain)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
       [
         date,
         description,
-        duration,
         distance,
         pace,
         zone5,
@@ -209,11 +208,11 @@ app.post("/submit", async (req, res) => {
 
     await pool.query(
       `INSERT INTO exercise_averages 
-        (duration_avg, distance_avg, pace_avg, zone5_avg, zone4_avg, zone3_avg, zone2_avg, zone1_avg, avg_hr_avg, max_hr_avg, strain_avg)
+        (distance_avg, pace_avg, zone5_avg, zone4_avg, zone3_avg, zone2_avg, zone1_avg, avg_hr_avg, max_hr_avg, strain_avg)
        VALUES 
-        ($1::interval, ROUND(CAST($2 AS numeric), 2), ROUND(CAST($3 AS numeric), 2), ROUND(CAST($4 AS numeric), 2), ROUND(CAST($5 AS numeric), 2), ROUND(CAST($6 AS numeric), 2), ROUND(CAST($7 AS numeric), 2), ROUND(CAST($8 AS numeric), 2), ROUND(CAST($9 AS numeric), 2), ROUND(CAST($10 AS numeric), 2), ROUND(CAST($11 AS numeric), 2))`,
+        (ROUND(CAST($1 AS numeric), 2), ROUND(CAST($2 AS numeric), 2), ROUND(CAST($3 AS numeric), 2), ROUND(CAST($4 AS numeric), 2), ROUND(CAST($5 AS numeric), 2), ROUND(CAST($6 AS numeric), 2), ROUND(CAST($7 AS numeric), 2), ROUND(CAST($8 AS numeric), 2), ROUND(CAST($9 AS numeric), 2), ROUND(CAST($10 AS numeric), 2))`,
       [
-        averages.duration_avg,
+        // averages.duration_avg,
         averages.distance_avg,
         averages.pace_avg,
         averages.zone5_avg,
@@ -255,7 +254,7 @@ app.get("/logs", async (req, res) => {
 
     res.render("logs", {
       entryLogs: entryLogs,
-      duration_avg: averages.duration_avg || "N/A",
+      // duration_avg: averages.duration_avg || "N/A",
       distance_avg: averages.distance_avg || "N/A",
       pace_avg: averages.pace_avg || "N/A",
       zone5_avg: averages.zone5_avg || "N/A",

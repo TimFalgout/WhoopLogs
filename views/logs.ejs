@@ -26,7 +26,6 @@
     <table class="table table-striped-columns">
       <thead>
         <tr>
-          <th scope="col">Duration</th>
           <th scope="col">Distance M</th>
           <th scope="col">Pace MPH</th>
           <th scope="col">Zone 5</th>
@@ -42,7 +41,6 @@
       <tbody>
         <!-- Display the calculated averages -->
         <tr>
-          <td><%= duration_avg %></td>
           <td><%= distance_avg + ' Miles' %></td>
           <td><%= pace_avg + ' MPH' %></td>
           <td><%= zone5_avg + '%' %></td>
@@ -74,7 +72,6 @@
         <tr>
           <th scope="col">Date</th>
           <th scope="col">Description</th>
-          <th scope="col">Duration</th>
           <th scope="col">Distance M</th>
           <th scope="col">Pace MPH</th>
           <th scope="col">Zone 5</th>
@@ -93,7 +90,6 @@
         <tr id="table-rows">
           <td><%=  new Date(row.date).toLocaleDateString('en-US') %></td>
           <td><%= row.description %></td>
-          <td><%= row.duration %></td>
           <td><%= row.distance + ' Miles' %></td>
           <td><%= row.pace + ' MPH' %></td>
           <td><%= row.zone5 + '%' %></td>
