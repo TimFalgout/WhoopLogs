@@ -1,5 +1,4 @@
 
-
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
@@ -50,24 +49,12 @@ app.use(express.static("public"));
 app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, 'views'));
 
-// Formatting duration
-function formatDuration(interval) {
-  const hours = interval.hours || 0;
-  const minutes = interval.minutes || 0;
-  const seconds = interval.seconds || 0;
-
-  return `${hours.toString().padStart(2, "0")}:${minutes
-    .toString()
-    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-}
-
 // Function to calculate averages
 async function updateAverages() {
   const result = await pool.query("SELECT * FROM exercise_logs");
   const entryLogs = result.rows;
 
-  let durationSum = 0,
-    distanceSum = 0,
+  let distanceSum = 0,
     paceSum = 0;
   let zone5Sum = 0,
     zone4Sum = 0,
@@ -81,7 +68,6 @@ async function updateAverages() {
 
   if (entryCount === 0) {
     return {
-      duration_avg: "00:00:00",
       distance_avg: 0,
       pace_avg: 0,
       zone5_avg: 0,
@@ -95,22 +81,8 @@ async function updateAverages() {
     };
   }
 
+  // Loop through entryLogs to sum the values
   entryLogs.forEach((entry) => {
-    const duration = entry.duration || { hours: 0, minutes: 0, seconds: 0 };
-
-    // Convert to numbers explicitly
-    const hours = parseInt(duration.hours, 10) || 0;
-    const minutes = parseInt(duration.minutes, 10) || 0;
-    const seconds = parseInt(duration.seconds, 10) || 0;
-
-    console.log(
-      `Numeric values - hours: ${hours}, minutes: ${minutes}, seconds: ${seconds}`
-    );
-
-    // Perform the calculation
-    let totalSeconds = hours * 3600 + minutes * 60 + seconds;
-    durationSum += totalSeconds;
-
     distanceSum += parseFloat(entry.distance) || 0;
     paceSum += parseFloat(entry.pace) || 0;
     zone5Sum += parseFloat(entry.zone5) || 0;
@@ -124,7 +96,6 @@ async function updateAverages() {
   });
 
   // Calculate averages
-  let durationAvgInSeconds = durationSum / entryCount;
   let distanceAvg = distanceSum / entryCount;
   let paceAvg = paceSum / entryCount;
   let zone5Avg = zone5Sum / entryCount;
@@ -136,18 +107,8 @@ async function updateAverages() {
   let maxHrAvg = maxHrSum / entryCount;
   let strainAvg = strainSum / entryCount;
 
-  // Convert average duration back to hours, minutes, and seconds
-  let avgHours = Math.floor(durationAvgInSeconds / 3600);
-  let avgMinutes = Math.floor((durationAvgInSeconds % 3600) / 60);
-  let avgSeconds = Math.floor(durationAvgInSeconds % 60);
-
-  let durationAvg = `${avgHours.toString().padStart(2, "0")}:${avgMinutes
-    .toString()
-    .padStart(2, "0")}:${avgSeconds.toString().padStart(2, "0")}`;
-
   // Return the averages
   return {
-    duration_avg: durationAvg,
     distance_avg: distanceAvg,
     pace_avg: paceAvg,
     zone5_avg: zone5Avg,
@@ -161,13 +122,11 @@ async function updateAverages() {
   };
 }
 
+
 // Perform form submission and update averages
 app.post("/submit", async (req, res) => {
   let date = req.body.formDate;
   let description = req.body.formDescription;
-  let hours = req.body.formHours || 0;
-  let minutes = req.body.formMinutes || 0;
-  let seconds = req.body.formSeconds || 0;
   let distance = req.body.formDistance;
   let pace = req.body.formPace;
   let zone5 = req.body.form5;
@@ -179,14 +138,11 @@ app.post("/submit", async (req, res) => {
   let maxHr = req.body.formMaxHr;
   let strain = req.body.formStrain;
 
-  // Create a duration string in HH:MM:SS format
-  let duration = `${hours}:${minutes}:${seconds}`;
-
   try {
     // Insert into the exercise_logs table
     await pool.query(
       `INSERT INTO exercise_logs (date, description, distance, pace, zone5, zone4, zone3, zone2, zone1, avg_hr, max_hr, strain)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
       [
         date,
         description,
@@ -208,11 +164,10 @@ app.post("/submit", async (req, res) => {
 
     await pool.query(
       `INSERT INTO exercise_averages 
-        (distance_avg, pace_avg, zone5_avg, zone4_avg, zone3_avg, zone2_avg, zone1_avg, avg_hr_avg, max_hr_avg, strain_avg)
-       VALUES 
-        (ROUND(CAST($1 AS numeric), 2), ROUND(CAST($2 AS numeric), 2), ROUND(CAST($3 AS numeric), 2), ROUND(CAST($4 AS numeric), 2), ROUND(CAST($5 AS numeric), 2), ROUND(CAST($6 AS numeric), 2), ROUND(CAST($7 AS numeric), 2), ROUND(CAST($8 AS numeric), 2), ROUND(CAST($9 AS numeric), 2), ROUND(CAST($10 AS numeric), 2))`,
+      (distance_avg, pace_avg, zone5_avg, zone4_avg, zone3_avg, zone2_avg, zone1_avg, avg_hr_avg, max_hr_avg, strain_avg)
+      VALUES 
+      (ROUND(CAST($1 AS numeric), 2), ROUND(CAST($2 AS numeric), 2), ROUND(CAST($3 AS numeric), 2), ROUND(CAST($4 AS numeric), 2), ROUND(CAST($5 AS numeric), 2), ROUND(CAST($6 AS numeric), 2), ROUND(CAST($7 AS numeric), 2), ROUND(CAST($8 AS numeric), 2), ROUND(CAST($9 AS numeric), 2), ROUND(CAST($10 AS numeric), 2))`,
       [
-        // averages.duration_avg,
         averages.distance_avg,
         averages.pace_avg,
         averages.zone5_avg,
@@ -241,11 +196,6 @@ app.get("/logs", async (req, res) => {
     );
     const entryLogs = result.rows;
 
-    // Format duration for display
-    entryLogs.forEach((entry) => {
-      entry.duration = formatDuration(entry.duration); // Format duration
-    });
-
     // Fetch the latest averages
     const averagesResult = await pool.query(
       "SELECT * FROM exercise_averages ORDER BY id DESC LIMIT 1"
@@ -254,7 +204,6 @@ app.get("/logs", async (req, res) => {
 
     res.render("logs", {
       entryLogs: entryLogs,
-      // duration_avg: averages.duration_avg || "N/A",
       distance_avg: averages.distance_avg || "N/A",
       pace_avg: averages.pace_avg || "N/A",
       zone5_avg: averages.zone5_avg || "N/A",
