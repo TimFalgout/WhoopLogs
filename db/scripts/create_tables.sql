@@ -1,6 +1,6 @@
 -- db/scripts/create_tables.sql
 
-CREATE TABLE exercise_logs (
+CREATE TABLE IF NOT EXISTS exercise_logs (
   id SERIAL PRIMARY KEY,
   date DATE NOT NULL,
   description VARCHAR(255) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE exercise_logs (
   strain DOUBLE PRECISION NOT NULL
 );
 
-CREATE TABLE exercise_averages (
+CREATE TABLE IF NOT EXISTS exercise_averages (
   id SERIAL PRIMARY KEY,
   distance_avg DOUBLE PRECISION NOT NULL,
   pace_avg DOUBLE PRECISION NOT NULL,
